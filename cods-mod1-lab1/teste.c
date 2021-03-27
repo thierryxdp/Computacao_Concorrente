@@ -17,7 +17,7 @@ int main(void){
 
     
     clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tempo gasto sem uso de threads
     printf("Tempo de execução: %f\n", time_spent);
     printf("Término da thread principal! Foi usada apenas a thread principal.\n");
     return 0;
