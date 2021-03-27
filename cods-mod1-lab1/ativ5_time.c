@@ -65,7 +65,7 @@ int main(void){
         } 
     }
     clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // calcula o tempo gasto
     printf("Tempo de execução: %f\n", time_spent);
 
     free(thread);
