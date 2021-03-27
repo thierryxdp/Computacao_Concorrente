@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define NELEM 1000000000
+#define NELEM 1000000000 // 1e9
 int main(void){
     clock_t begin = clock();
     int *vetor = (int *) malloc (NELEM*sizeof(int));
@@ -15,9 +15,10 @@ int main(void){
         vetor[i]++;
     }
 
-    printf("Término da thread principal!\n");
+    
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("Tempo de execução: %f\n", time_spent);
+    printf("Término da thread principal! Foi usada apenas a thread principal.\n");
     return 0;
 }
