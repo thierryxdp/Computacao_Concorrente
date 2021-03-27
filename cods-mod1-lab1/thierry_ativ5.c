@@ -10,6 +10,8 @@
 
     // 3. Execute o programa várias vezes e verifique se ele está funcionando corretamente.
 
+// Alunos: Thierry Pierre Dutoit -> DRE: 119040432
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
