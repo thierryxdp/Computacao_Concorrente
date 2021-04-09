@@ -1,0 +1,28 @@
+#! /bin/sh
+gcc concorrente.c -o concorrente -Wall -lm -lpthread
+gcc sequencial.c -o sequencial -Wall -lm -lpthread
+./sequencial 10 >> saida.txt
+./sequencial 1000 >> saida.txt
+./sequencial 100000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+./concorrente 10 1 >> saida.txt
+./concorrente 1000 1 >> saida.txt
+./concorrente 100000 1 >> saida.txt
+./concorrente 10000000 1 >> saida.txt
+./concorrente 1000000000 1 >> saida.txt
+./concorrente 10 2 >> saida.txt
+./concorrente 1000 2 >> saida.txt
+./concorrente 100000 2 >> saida.txt
+./concorrente 10000000 2 >> saida.txt
+./concorrente 1000000000 2 >> saida.txt
+./concorrente 10 4 >> saida.txt
+./concorrente 1000 4 >> saida.txt
+./concorrente 100000 4 >> saida.txt
+./concorrente 10000000 4 >> saida.txt
+./concorrente 1000000000 4 >> saida.txt
+./concorrente 10 8 >> saida.txt
+./concorrente 1000 8 >> saida.txt
+./concorrente 100000 8 >> saida.txt
+./concorrente 10000000 8 >> saida.txt
+./concorrente 1000000000 8 >> saida.txt

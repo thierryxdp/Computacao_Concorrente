@@ -1,0 +1,161 @@
+Tempo de execução sequencial: 0.000009
+Valor de pi sequencial: 3.041839618929403
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.099753034660390
+Tempo de execução sequencial: 0.000048
+Valor de pi sequencial: 3.140592653839794
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000999999749999
+Tempo de execução sequencial: 0.004343
+Valor de pi sequencial: 3.141582653589720
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000010000000073
+Tempo de execução sequencial: 0.287849
+Valor de pi sequencial: 3.141592553589792
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000100000002
+Tempo de execução sequencial: 29.487745
+Valor de pi sequencial: 3.141592652588050
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000001001743
+Executando com [10] elementos e [1] threads
+
+Tempo de execução concorrente: 0.000245
+Valor de pi sequencial: 3.041839618929403
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.099753034660390
+
+sExecutando com [1000] elementos e [1] threads
+
+Tempo de execução concorrente: 0.000227
+Valor de pi sequencial: 3.140592653839794
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000999999749999
+
+sExecutando com [100000] elementos e [1] threads
+
+Tempo de execução concorrente: 0.003175
+Valor de pi sequencial: 3.141582653589720
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000010000000073
+
+sExecutando com [10000000] elementos e [1] threads
+
+Tempo de execução concorrente: 0.302483
+Valor de pi sequencial: 3.141592553589792
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000100000002
+
+sExecutando com [1000000000] elementos e [1] threads
+
+Tempo de execução concorrente: 29.497056
+Valor de pi sequencial: 3.141592652588050
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000001001743
+
+sExecutando com [10] elementos e [2] threads
+
+Tempo de execução concorrente: 0.000281
+Valor de pi sequencial: 3.041839618929403
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.099753034660390
+
+sExecutando com [1000] elementos e [2] threads
+
+Tempo de execução concorrente: 0.000280
+Valor de pi sequencial: 3.140592653839795
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000999999749999
+
+sExecutando com [100000] elementos e [2] threads
+
+Tempo de execução concorrente: 0.001735
+Valor de pi sequencial: 3.141582653589780
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000010000000013
+
+sExecutando com [10000000] elementos e [2] threads
+
+Tempo de execução concorrente: 0.148659
+Valor de pi sequencial: 3.141592553589780
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000100000014
+
+sExecutando com [1000000000] elementos e [2] threads
+
+Tempo de execução concorrente: 14.790061
+Valor de pi sequencial: 3.141592652589258
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000001000535
+
+sExecutando com [10] elementos e [4] threads
+
+Tempo de execução concorrente: 0.000251
+Valor de pi sequencial: 3.041839618929403
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.099753034660390
+
+sExecutando com [1000] elementos e [4] threads
+
+Tempo de execução concorrente: 0.000229
+Valor de pi sequencial: 3.140592653839791
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000999999750002
+
+sExecutando com [100000] elementos e [4] threads
+
+Tempo de execução concorrente: 0.001723
+Valor de pi sequencial: 3.141582653589787
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000010000000006
+
+sExecutando com [10000000] elementos e [4] threads
+
+Tempo de execução concorrente: 0.102366
+Valor de pi sequencial: 3.141592553589743
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000100000050
+
+sExecutando com [1000000000] elementos e [4] threads
+
+Tempo de execução concorrente: 9.499196
+Valor de pi sequencial: 3.141592652589210
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000001000583
+
+sExecutando com [10] elementos e [8] threads
+
+Tempo de execução concorrente: 0.000334
+Valor de pi sequencial: 3.041839618929403
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.099753034660390
+
+sExecutando com [1000] elementos e [8] threads
+
+Tempo de execução concorrente: 0.000427
+Valor de pi sequencial: 3.140592653839794
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000999999749999
+
+sExecutando com [100000] elementos e [8] threads
+
+Tempo de execução concorrente: 0.001684
+Valor de pi sequencial: 3.141582653589778
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000010000000015
+
+sExecutando com [10000000] elementos e [8] threads
+
+Tempo de execução concorrente: 0.110536
+Valor de pi sequencial: 3.141592553589832
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000099999961
+
+sExecutando com [1000000000] elementos e [8] threads
+
+Tempo de execução concorrente: 9.553023
+Valor de pi sequencial: 3.141592652589324
+Valor de pi da biblioteca: 3.141592653589793
+Erro: 0.000000001000469
+
+s
