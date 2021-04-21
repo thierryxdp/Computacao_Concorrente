@@ -1,0 +1,9 @@
+#! /bin/sh
+gcc teste.c -o teste -Wall -lpthread
+./teste >> saida.txt
+cat bar >> saida.txt
+./teste >> saida.txt
+cat bar >> saida.txt
+
+
+
