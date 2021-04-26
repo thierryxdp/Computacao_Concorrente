@@ -1,0 +1,14 @@
+#!/bin/sh
+gcc crivoconcorrente3.c -o concorrente3 -Wall -lm -lpthread
+gcc crivo_otimizado.c -o otimizado -Wall -lm -lpthread
+./concorrente3 1000000000 4 >> saida4.txt
+./concorrente3 1000000000 4 >> saida4.txt
+./concorrente3 1000000000 4 >> saida4.txt
+./concorrente3 1000000000 4 >> saida4.txt
+./concorrente3 1000000000 4 >> saida4.txt
+./otimizado 1000000000 4 >> saida4.txt
+./otimizado 1000000000 4 >> saida4.txt
+./otimizado 1000000000 4 >> saida4.txt
+./otimizado 1000000000 4 >> saida4.txt
+./otimizado 1000000000 4 >> saida4.txt
+exec bash
