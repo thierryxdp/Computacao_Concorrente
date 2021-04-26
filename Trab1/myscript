@@ -1,0 +1,18 @@
+#!/bin/sh
+gcc crivosequencial.c -o sequencial -Wall -lm -lpthread
+./sequencial 100000 >> saida.txt
+./sequencial 100000 >> saida.txt
+./sequencial 100000 >> saida.txt
+./sequencial 100000 >> saida.txt
+./sequencial 100000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 10000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+./sequencial 1000000000 >> saida.txt
+exec bash
