@@ -26,6 +26,14 @@ class Resource {
         this.escritores--;
     }
 
+    public void adicionaLeitor(){
+        this.leitores++;
+    }
+
+    public void removeLeitor(){
+        this.leitores--;
+    }
+
     public int getLeitores(){
         return this.leitores;
     }
@@ -78,22 +86,50 @@ class Escritora extends Thread{
     }
 }
 
-/*
-class Leitora implements Runnable{
 
+class Leitora extends Thread{
+
+    private int id;
+    Resource rs;
+
+    public Leitora(Resource rs, int id){
+        this.rs = rs;
+        this.id = id;
+    }
 
     public void run(){
-
         while(true){
             IniciaLeitura(this.id);
             System.out.println("Leitora[" + id + "] está lendo.");
             FimLeitura(this.id);
-            try { sleep(1); }
-            catch (InterruptedException e) { return ;}
+        }
+    }
+
+    public void IniciaLeitura(int id){
+        synchronized (rs){
+            System.out.println("Leitora[" + id + "] quer ler.");
+            while (rs.getEscritores() > 0 || rs.getPrioridade_escrita() > 0){
+                System.out.println("Leitora[" + id + "] bloqueou.");
+                try { rs.wait(); }
+                catch (InterruptedException e) {System.out.println("erro"); return; }
+                System.out.println("Leitora[" + id + "] desbloqueou.");
+            }
+            rs.adicionaLeitor();
+        }
+    }
+
+    public void FimLeitura(int id){
+        synchronized (rs){
+            System.out.println("Leitora[" + id + "] terminou de ler.");
+            rs.removeLeitor();
+            if (rs.getLeitores() == 0) {
+                System.out.println("Desbloqueando todas as Threads.");
+                rs.notifyAll();
+            }
         }
     }
 }
-*/
+
 
 public class lc {
 
@@ -109,13 +145,17 @@ public class lc {
         int nescritoras = Integer.parseInt(args[1]);
 
         // Cria as instâncias das threads
-        Thread[] threads = new Thread[nescritoras];
+        Thread[] threads = new Thread[nescritoras + nleitoras];
 
         //cria uma instancia do recurso compartilhado entre as threads
         Resource rs = new Resource();
         // Cria as threads do programa
-        for (int i = 0; i < threads.length; i++) {
+        for (int i = 0; i < nescritoras; i++) {
             threads[i] = new Escritora(rs, i);
+        }
+
+        for (int i = nescritoras; i < threads.length; i++){
+            threads[i] = new Leitora(rs, i);
         }
         //inicia as threads
         for (int i = 0; i < threads.length; i++) {
