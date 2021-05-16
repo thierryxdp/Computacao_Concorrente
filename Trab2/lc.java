@@ -77,12 +77,14 @@ class Escritora extends Thread{
     }
 
     public void FimEscrita(int id){
-        synchronized (rs){
+        synchronized (rs) {
             System.out.println("Escritora[" + id + "] terminou de escrever.");
             rs.removeEscritor();
             System.out.println("Desbloqueando todas as Threads.");
             rs.notifyAll();
         }
+        try {Thread.sleep(1000);}
+        catch (InterruptedException e) { System.out.println("erro"); return; }
     }
 }
 
@@ -127,6 +129,8 @@ class Leitora extends Thread{
                 rs.notifyAll();
             }
         }
+        try {Thread.sleep(1000);}
+        catch (InterruptedException e) { System.out.println("erro"); return; }
     }
 }
 
