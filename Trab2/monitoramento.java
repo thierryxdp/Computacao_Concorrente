@@ -18,7 +18,6 @@ class Valor{
     public void setIdLeitura(int idLeitura){
         this.idLeitura = idLeitura;
     }
-
     public void setValue(int value){
         this.value = value;
     }
@@ -37,25 +36,41 @@ class Valor{
 class Resource {
     private Valor[] values;
     private int position;
+    private int number_sensores;
+    private int[] idLeitura;
 
-    public Resource(){
+    public Resource(int sensores){
         this.values = new Valor[60];
         this.position = 0;
+        this.number_sensores = sensores;
 
         for (int i = 0; i < 60; i++){
             values[i] = new Valor();
         }
+        this.idLeitura = new int[this.number_sensores];
+
+        for (int i = 0; i < this.number_sensores; i++){
+            this.idLeitura[i] = 0;
+        }
     }
 
-    public void addValue(int idSensor, int idLeitura, int value){
-        this.values[this.position].setIdLeitura(idLeitura);
+    public void addValue(int idSensor, int value){
+        this.values[this.position].setIdLeitura(this.idLeitura[idSensor]);
         this.values[this.position].setIdSensor(idSensor);
         this.values[this.position].setValue(value);
-        System.out.println("idLeitura: " + this.values[this.position].getIdLeitura() + ". idSensor: " + this.values[this.position].getIdSensor() +
-                ". Value: " + this.values[this.position].getValue());
-        System.out.println("Position: " + this.position);
+        //System.out.println("idLeitura: " + this.values[this.position].getIdLeitura() + ". idSensor: " + this.values[this.position].getIdSensor() +
+        //        ". Value: " + this.values[this.position].getValue());
+        //System.out.println("Position: " + this.position);
         this.position += 1;
         this.position = this.position % 60;
+    }
+
+    public Valor getValue(int pos){
+        return this.values[pos];
+    }
+
+    public void addIdLeitura(int idAtuador){
+        this.idLeitura[idAtuador]++;
     }
 }
 
@@ -116,13 +131,13 @@ class Escritora {
 
     public void IniciaEscrita(){
         synchronized (le){
-            System.out.println("Escritora quer escrever.");
+            //System.out.println("Escritora quer escrever.");
             le.setPrioridade_escrita(1);
             while (le.getEscritores() > 0 || le.getLeitores() > 0){
-                System.out.println("Escritora bloqueou.");
+                //System.out.println("Escritora bloqueou.");
                 try { le.wait(); }
                 catch (InterruptedException e) { System.out.println("erro"); return; }
-                System.out.println("Escritora desbloqueou.");
+                //System.out.println("Escritora desbloqueou.");
             }
             le.adicionaEscritor();
             le.setPrioridade_escrita(0);
@@ -131,9 +146,9 @@ class Escritora {
 
     public void FimEscrita(){
         synchronized (le) {
-            System.out.println("Escritora terminou de escrever.");
+            //System.out.println("Escritora terminou de escrever.");
             le.removeEscritor();
-            System.out.println("Desbloqueando todas as Threads.");
+            //System.out.println("Desbloqueando todas as Threads.");
             le.notifyAll();
         }
         try {Thread.sleep(1000);}
@@ -145,18 +160,18 @@ class Leitora {
 
     LE le;
 
-    public Leitora(LE rs, int id){
+    public Leitora(LE le){
         this.le = le;
     }
 
-    public void IniciaLeitura(int id){
+    public void IniciaLeitura(){
         synchronized (le){
-            System.out.println("Leitora quer ler.");
+            //System.out.println("Leitora quer ler.");
             while (le.getEscritores() > 0 || le.getPrioridade_escrita() > 0){
-                System.out.println("Leitora bloqueou.");
+                //System.out.println("Leitora bloqueou.");
                 try { le.wait(); }
                 catch (InterruptedException e) {System.out.println("erro"); return; }
-                System.out.println("Leitora desbloqueou.");
+                //System.out.println("Leitora desbloqueou.");
             }
             le.adicionaLeitor();
         }
@@ -164,10 +179,10 @@ class Leitora {
 
     public void FimLeitura(){
         synchronized (le){
-            System.out.println("Leitora terminou de ler.");
+            //System.out.println("Leitora terminou de ler.");
             le.removeLeitor();
             if (le.getLeitores() == 0) {
-                System.out.println("Desbloqueando todas as Threads.");
+                //System.out.println("Desbloqueando todas as Threads.");
                 le.notifyAll();
             }
         }
@@ -180,7 +195,6 @@ class Sensor extends Thread{
 
     // atributos
     private int id;
-    private int id_leitura;
 
     Resource rs;
     LE le;
@@ -196,11 +210,11 @@ class Sensor extends Thread{
         while (true){
             Random rand = new Random();
             int value = rand.nextInt(16) + 25;
-            System.out.println("Temperatura: " + value);
             if (value > 30){
+                System.out.println("Temperatura: " + value);
                 Escritora esc = new Escritora(this.le);
                 esc.IniciaEscrita();
-                rs.addValue(this.id, 0, value);
+                rs.addValue(this.id, value);
                 esc.FimEscrita();
 
             }
@@ -213,6 +227,79 @@ class Sensor extends Thread{
 
 class Atuador extends Thread{
 
+    // atributos
+    private int id;
+    private int alerta_vermelho;
+    private int alerta_amarelo;
+    private double media;
+    private int position;
+    private int alerta;
+    Resource rs;
+    LE le;
+    //construtor
+
+    public Atuador(int id, Resource rs, LE le){
+        this.rs = rs;
+        this.id = id;
+        this.le = le;
+        this.alerta = 0; // zero condição normal, 1 condição amarela e 2 condição vermelha
+        this.alerta_vermelho = 0;
+        this.alerta_amarelo = 0;
+        this.media = 0;
+        this.position = 0;
+    }
+
+    public void run(){
+        while (true){
+            Leitora leit = new Leitora(this.le);
+            leit.IniciaLeitura();
+            for (int i = 0; i < 60; i++){
+                if (rs.getValue(i).getValue() == 0) break;
+
+                if (rs.getValue(i).getIdSensor() == this.id){
+                    // Se o id do Sensor for igual ao Id do Atuador, nós lemos aquele valor e portanto somamos 1 ao idLeitura.
+                    rs.addIdLeitura(this.id);
+                    // Adicionamos o valor ao vetor de valores lidos
+                    if (position < 15){
+                        if (rs.getValue(i).getValue() > 35) alerta_amarelo++;
+                        position++;
+                    } else {
+                        media = media + rs.getValue(i).getValue();
+                        position++;
+                    }
+                    if (rs.getValue(i).getValue() > 35) {
+                        alerta_vermelho++;
+                        if (alerta_vermelho == 5){
+                            alerta = 2;
+                        }
+                    } else {
+                        alerta_vermelho = 0;
+                    }
+                }
+            }
+
+            if (alerta == 2){
+                System.out.println("Atuador[" + this.id + "] emitiu Alerta Vermelho!!!");
+            } else if (alerta == 0 && alerta_amarelo >= 5){
+                System.out.println("Atuador[" + this.id + "] emitiu Alerta Amarelo!!");
+            } else {
+                System.out.println("Atuador[" + this.id + "] emitiu Alerta Normal!");
+            }
+            if (this.media == 0){
+                System.out.println("Sem sensor disponiveis apos leitura!");
+            } else {
+                System.out.println("Media dos sensores ainda disponiveis: " + media/(position-15));
+            }
+            this.alerta = 0;
+            this.alerta_vermelho = 0;
+            this.alerta_amarelo = 0;
+            this.media = 0;
+            this.position = 0;
+            leit.FimLeitura();
+            try {Thread.sleep(2000);}
+            catch (InterruptedException e) { System.out.println("erro"); return; }
+        }
+    }
 }
 
 
@@ -226,22 +313,27 @@ public class monitoramento {
         }
         int sensores = Integer.parseInt(args[0]);
 
-        Resource rs = new Resource();
+        Resource rs = new Resource(sensores);
         LE le = new LE();
-        Thread[] threads = new Thread[sensores];
+        Thread[] threadsSensores = new Thread[sensores];
+        Thread[] threadsAtuadores = new Thread[sensores];
 
-        for (int i = 0; i < threads.length; i++) {
-            threads[i] = new Sensor(i, rs, le);
+
+        for (int i = 0; i < threadsSensores.length; i++) {
+            threadsSensores[i] = new Sensor(i, rs, le);
+            threadsAtuadores[i] = new Atuador(i, rs, le);
         }
 
-        for (int i = 0; i < threads.length; i++) {
-            threads[i].start();
+        for (int i = 0; i < threadsSensores.length; i++) {
+            threadsSensores[i].start();
+            threadsAtuadores[i].start();
         }
 
         //espera pelo termino de todas as threads
-        for (int i = 0; i < threads.length; i++) {
+        for (int i = 0; i < threadsSensores.length; i++) {
             try {
-                threads[i].join();
+                threadsAtuadores[i].join();
+                threadsSensores[i].join();
             } catch (InterruptedException e) {
                 return;
             }
