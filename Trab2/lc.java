@@ -1,43 +1,53 @@
 class Resource {
-    // recurso compartilhado
-    private int leitores;
-    private int escritores;
-    private int prioridade_escrita;
 
+    // recurso compartilhado
+    private int leitores; // número de leitores executando
+    private int escritores; // número de escritores executando
+    private int prioridade_escrita; // 1 se há prioridade para escrita e 0 caso não haja
+
+    // construtor que inicializa as variáveis com 0, é desnecessário pois por padrão o Java já faz isso.
     public Resource(){
         this.leitores = 0;
         this.escritores = 0;
         this.prioridade_escrita = 0;
     }
 
+    // define prioridade para escrita, o recomendado é passar como valor 0 (sem prioridade) ou 1 (com prioridade)
     public void setPrioridade_escrita(int value){
         this.prioridade_escrita = value;
     }
 
+    // retorna valor da prioridade
     public int getPrioridade_escrita(){
         return this.prioridade_escrita;
     }
 
+    // Soma em 1 o número de escritores
     public void adicionaEscritor(){
         this.escritores++;
     }
 
+    // Diminui em 1 o número de escritores
     public void removeEscritor(){
         this.escritores--;
     }
 
+    // Soma em 1 o número de leitores
     public void adicionaLeitor(){
         this.leitores++;
     }
 
+    // Diminui em 1 o número de leitores
     public void removeLeitor(){
         this.leitores--;
     }
 
+    // retorna o número de leitores
     public int getLeitores(){
         return this.leitores;
     }
 
+    // retorna o número de escritores
     public int getEscritores(){
         return this.escritores;
     }
@@ -45,45 +55,48 @@ class Resource {
 
 class Escritora extends Thread{
 
+    // Id da Escritora e objeto da área de dados compartilhada
     private int id;
     Resource rs;
 
+    // Inicializa de acordo com os parâmetros passados na instanciação
     public Escritora(Resource rs, int id){
         this.rs = rs;
         this.id = id;
     }
 
+    // Tarefa que a thread Escritora está encarregada de fazer
     public void run(){
-        while(true){
-            IniciaEscrita(this.id);
+        while(true){    // executa indeterminadamente
+            IniciaEscrita(this.id); // adiciona escritor
             System.out.println("Escritora[" + id + "] está escrevendo.");
-            FimEscrita(this.id);
+            FimEscrita(this.id);    // remove escritor
         }
     }
 
     public void IniciaEscrita(int id){
-        synchronized (rs){
+        synchronized (rs){          // exclusão mútua através do recurso compartilhado
             System.out.println("Escritora[" + id + "] quer escrever.");
-            rs.setPrioridade_escrita(1);
-            while (rs.getEscritores() > 0 || rs.getLeitores() > 0){
+            rs.setPrioridade_escrita(1);    // seta prioridade de escrita com o valor 1
+            while (rs.getEscritores() > 0 || rs.getLeitores() > 0){ // checa se existem leitores ou escritor executando
                 System.out.println("Escritora[" + id + "] bloqueou.");
-                try { rs.wait(); }
+                try { rs.wait(); }  // caso existam escritores ou leitores já executando a thread se bloqueia
                 catch (InterruptedException e) { System.out.println("erro"); return; }
                 System.out.println("Escritora[" + id + "] desbloqueou.");
             }
-            rs.adicionaEscritor();
-            rs.setPrioridade_escrita(0);
+            rs.adicionaEscritor();  // podemos adicionar o escritor
+            rs.setPrioridade_escrita(0);    // tiramos a prioridade de escrita pois a escritora já começou a executar
         }
     }
 
     public void FimEscrita(int id){
-        synchronized (rs) {
+        synchronized (rs) {         // exclusão mútua através do recurso compartilhado
             System.out.println("Escritora[" + id + "] terminou de escrever.");
-            rs.removeEscritor();
+            rs.removeEscritor();    // remove o escritor pois ele já terminou de escrever
             System.out.println("Desbloqueando todas as Threads.");
-            rs.notifyAll();
+            rs.notifyAll();         // notifica caso algum escritor ou leitores tenham sido bloqueados
         }
-        try {Thread.sleep(1000);}
+        try {Thread.sleep(1000);}   // para visualizar melhor a alternância entre as threads
         catch (InterruptedException e) { System.out.println("erro"); return; }
     }
 }
@@ -91,14 +104,17 @@ class Escritora extends Thread{
 
 class Leitora extends Thread{
 
+    // Id da Escritora e objeto da área de dados compartilhada
     private int id;
     Resource rs;
 
+    // Inicializa de acordo com os parâmetros passados na instanciação
     public Leitora(Resource rs, int id){
         this.rs = rs;
         this.id = id;
     }
 
+    // Tarefa que a thread Leitora está encarregada de fazer
     public void run(){
         while(true){
             IniciaLeitura(this.id);
@@ -107,29 +123,30 @@ class Leitora extends Thread{
         }
     }
 
+
     public void IniciaLeitura(int id){
-        synchronized (rs){
+        synchronized (rs){          // exclusão mútua através do recurso compartilhado
             System.out.println("Leitora[" + id + "] quer ler.");
-            while (rs.getEscritores() > 0 || rs.getPrioridade_escrita() > 0){
+            while (rs.getEscritores() > 0 || rs.getPrioridade_escrita() > 0){   // caso tenha alguma thread escritora executando ou querendo executar bloqueia
                 System.out.println("Leitora[" + id + "] bloqueou.");
                 try { rs.wait(); }
                 catch (InterruptedException e) {System.out.println("erro"); return; }
                 System.out.println("Leitora[" + id + "] desbloqueou.");
             }
-            rs.adicionaLeitor();
+            rs.adicionaLeitor();    // conseguiu passar pela condição e adiciona o leitor
         }
     }
 
     public void FimLeitura(int id){
-        synchronized (rs){
+        synchronized (rs){          // exclusão mútua através do recurso compartilhado
             System.out.println("Leitora[" + id + "] terminou de ler.");
-            rs.removeLeitor();
+            rs.removeLeitor();      // leitora já terminou de ler e pode ser removida
             if (rs.getLeitores() == 0) {
                 System.out.println("Desbloqueando todas as Threads.");
-                rs.notifyAll();
+                rs.notifyAll();     // se for a única thread leitora executando libera a thread escritora que queria escrever se for o caso.
             }
         }
-        try {Thread.sleep(1000);}
+        try {Thread.sleep(1000);}   // visualizar melhor a alternância entre as threads
         catch (InterruptedException e) { System.out.println("erro"); return; }
     }
 }
