@@ -78,7 +78,7 @@ class LE {
     // recurso compartilhado
     private int leitores;
     private int escritores;
-    private int prioridade_escrita;
+    private int prioridade_escrita; // > 0 caso alguma escritora queira escrever e igual a 0 caso não haja
 
      // construtor
      public LE(){
@@ -87,8 +87,14 @@ class LE {
         this.prioridade_escrita = 0;
     }
 
-    public void setPrioridade_escrita(int value){
-        this.prioridade_escrita = value;
+    // aumenta prioridade de escrita em 1, significando que existe mais uma thread escritora querendo escrever
+    public void addPrioridade_escrita(){
+        this.prioridade_escrita++;
+    }
+
+    // remove prioridade da escrita em 1, significando que uma thread escritora começou a escrever
+    public void removePrioridade_escrita(){
+        this.prioridade_escrita--;
     }
 
     public int getPrioridade_escrita(){
@@ -132,7 +138,7 @@ class Escritora {
     public void IniciaEscrita(){
         synchronized (le){
             //System.out.println("Escritora quer escrever.");
-            le.setPrioridade_escrita(1);
+            le.addPrioridade_escrita();    // adiciona prioridade de escrita
             while (le.getEscritores() > 0 || le.getLeitores() > 0){
                 //System.out.println("Escritora bloqueou.");
                 try { le.wait(); }
@@ -140,7 +146,7 @@ class Escritora {
                 //System.out.println("Escritora desbloqueou.");
             }
             le.adicionaEscritor();
-            le.setPrioridade_escrita(0);
+            le.removePrioridade_escrita();    // tiramos a prioridade de escrita pois a escritora já começou a executar
         }
     }
 

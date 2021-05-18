@@ -13,7 +13,7 @@ class LE:
 
 	def escritorPrioridade(self,id):
 		''' Define prioridade de escrita para o escritor'''
-		self.prioridade_escrita = 1
+		self.prioridade_escrita += 1
 	def escritorBloqueado(self,id):
 		'''Recebe o id do escritor. Verifica se a decisao de bloqueio esta correta.'''
 		if(self.escritores==0 and self.leitores==0):
@@ -21,7 +21,7 @@ class LE:
 
 	def leitorLendo(self,id):
 		'''Recebe o id do leitor, verifica se pode ler e registra que esta lendo.'''
-		if(self.escritores>0) or (self.prioridade_escrita==1):
+		if(self.escritores>0) or (self.prioridade_escrita > 0):
 			print("ERRO: leitor " + str(id) + " esta lendo quando ha escritor escrevendo ou prioridade para escrita!")
 		self.leitores+=1
 
@@ -30,7 +30,7 @@ class LE:
 		if(self.escritores>0 or self.leitores>0):
 			print("ERRO: escritor " + str(id) + " esta escrevendo quando ha outro escritor ou leitores!")
 		self.escritores+=1
-		self.prioridade_escrita = 0
+		self.prioridade_escrita -= 1
 
 	def leitorSaindo(self,id):
 		'''Recebe o id do leitor e registra que terminou a leitura.'''

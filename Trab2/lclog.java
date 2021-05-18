@@ -3,7 +3,7 @@ class Resource {
     // recurso compartilhado
     private int leitores; // número de leitores executando
     private int escritores; // número de escritores executando
-    private int prioridade_escrita; // 1 se há prioridade para escrita e 0 caso não haja
+    private int prioridade_escrita; // > 0 caso alguma escritora queira escrever e igual a 0 caso não haja
 
     // construtor que inicializa as variáveis com 0, é desnecessário pois por padrão o Java já faz isso.
     public Resource(){
@@ -12,9 +12,14 @@ class Resource {
         this.prioridade_escrita = 0;
     }
 
-    // define prioridade para escrita, o recomendado é passar como valor 0 (sem prioridade) ou 1 (com prioridade)
-    public void setPrioridade_escrita(int value){
-        this.prioridade_escrita = value;
+    // aumenta prioridade de escrita em 1, significando que existe mais uma thread escritora querendo escrever
+    public void addPrioridade_escrita(){
+        this.prioridade_escrita++;
+    }
+
+    // remove prioridade da escrita em 1, significando que uma thread escritora começou a escrever
+    public void removePrioridade_escrita(){
+        this.prioridade_escrita--;
     }
 
     // retorna valor da prioridade
@@ -76,7 +81,7 @@ class Escritora extends Thread{
     public void IniciaEscrita(int id){
         synchronized (rs){          // exclusão mútua através do recurso compartilhado
             System.out.println("le.escritorPrioridade(" + id + ")");
-            rs.setPrioridade_escrita(1);    // seta prioridade de escrita com o valor 1
+            rs.addPrioridade_escrita();    // adiciona prioridade de escrita
             while (rs.getEscritores() > 0 || rs.getLeitores() > 0){ // checa se existem leitores ou escritor executando
                 System.out.println("le.escritorBloqueado(" + id + ")");
                 try { rs.wait(); }  // caso existam escritores ou leitores já executando a thread se bloqueia
@@ -84,7 +89,7 @@ class Escritora extends Thread{
             }
             System.out.println("le.escritorEscrevendo(" + id + ")");
             rs.adicionaEscritor();  // podemos adicionar o escritor
-            rs.setPrioridade_escrita(0);    // tiramos a prioridade de escrita pois a escritora já começou a executar
+            rs.removePrioridade_escrita();    // tiramos a prioridade de escrita pois a escritora já começou a executar
         }
     }
 
