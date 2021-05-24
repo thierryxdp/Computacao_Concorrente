@@ -1,16 +1,20 @@
 class SA:
     def __init__(self, quantsensores):
-        self.position = 0
-        self.valores = [[0]*3]*60                  # guarda [temp,id_sensor,id_leitura]
-        self.idLeitura = [0]*quantsensores           # guarda a quantidade de leituras para cada sensor
+        """ Temos a posição do vetor, um vetor de 60 posições com 3 posições inteiras e
+            a quantidade de leituras feita por cada Sensor. """
+        self.position = 0                          # Posição atual de escrita do vetor
+        self.valores = [[0]*3]*60                  # objeto Valor [valor,id_sensor,id_leitura]
+        self.idLeitura = [0]*quantsensores         # guarda a quantidade de medições feitas por cada sensor
 
     def sensor(self, id, temperatura):
+        """ Adiciona o valor medido pelo sensor na simulação que temos do Vetor """
         self.valores[self.position] = [temperatura, id, self.idLeitura[id]]
         self.idLeitura[id] = self.idLeitura[id] +1
         self.position = (self.position + 1) % 60
 
 
     def atuadorAlertaVermelho(self, id):
+        """ Simula o comportamento adotado pelos Atuadores no programa em Java e verifica se o alerta vermelho omitido está correto """
         ultima_posicao = 0
         for i in range(60):
             if (self.valores[i][0] != 0):
@@ -33,6 +37,7 @@ class SA:
             print("ERRO: Alerta Vermelho errado de Atuador(" + str(id) + ") pois nao teve as 5 ultimas leituras acima de 35")
 
     def atuadorAlertaAmarelo(self, id):
+        """ Simula o comportamento adotado pelos Atuadores no programa em Java e verifica se o alerta amarelo omitido está correto """
         ultima_posicao = 0
         for i in range(60):
             if (self.valores[i][0] != 0):
@@ -55,6 +60,7 @@ class SA:
             print("ERRO: Alerta Amarelo errado de Atuador(" + str(id) + ") pois nao teve as 15 ultimas leituras acima de 35")
 
     def atuadorAlertaNormal(self, id):
+        """ Simula o comportamento adotado pelos Atuadores no programa em Java e verifica se o alerta normal omitido está correto """
         ultima_posicao = 0
         for i in range(60):
             if (self.valores[i][0] != 0):
@@ -77,6 +83,8 @@ class SA:
             print("ERRO: Alerta Normal errado de Atuador(" + str(id) + ") pois teve 5 dentre as 15 ultimas leituras acima de 35")
 
     def atuadorMedia(self, id, media):
+        """ Calcula a Média dos valores de cada Sensor e verifica se a média lida no log condiz com a média calculada na simulação. 
+            Para isso adotamos um erro do valor entre as médias de 0.001 """
         ultima_posicao = 0
         for i in range(60):
             if (self.valores[i][0] != 0):
