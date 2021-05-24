@@ -231,9 +231,12 @@ class Sensor extends Thread{
 
     public void run(){
         while (true){
+            // gera valor entre 25 e 40
             Random rand = new Random();
             int value = rand.nextInt(16) + 25;
+            // Se for um valor significativo para ser armazenado no vetor
             if (value > 30){
+                // Escreve o valor no vetor junto com o id do Sensor e o id da Leitura
                 Escritora esc = new Escritora(this.le, this.id);
                 esc.IniciaEscrita(this.id);
                 System.out.println("sa.sensor(" + this.id + ", " + value +  ")");
@@ -243,6 +246,7 @@ class Sensor extends Thread{
                 esc.FimEscrita(this.id);
 
             }
+            // Thread dorme um pouco para melhor sincronização
             try {Thread.sleep(1000);}
             catch (InterruptedException e) { System.out.println("erro"); return; }
 
@@ -274,9 +278,10 @@ class Atuador extends Thread{
 
     public void run(){
         while (true){
+            //Iniciamos a leitura do Atuador
             Leitora leit = new Leitora(this.le, this.id);
             leit.IniciaLeitura(this.id);
-            //System.out.println("sa.atuadorlendo(" + this.id + ")");
+            // Pegamos o último valor emitido pelo Sensor de mesmo id que o Atuador
             int ultimo_Valor = 0;
             for (int i = 0; i < 60; i++){
                 if (rs.getValue(i).getValue() == 0) break;
@@ -287,12 +292,15 @@ class Atuador extends Thread{
                 }
 
             }
-            //System.out.println("Posicao colocada por ultimo do Sensor(" + this.id + "): " + ultimo_Valor);
+            // Fazemos módulo 60 pois idLeitura de um Sensor sempre aumenta em 1 sem limite
             int contador = ultimo_Valor % 60;
+            // Agora que sabemos qual foi a última medição feita, sabemos pegar as últimas leituras
+            // e podemos emitir o alerta correto
             for (int i = 0; i < 60; i++){
 
                 if (rs.getValue(contador).getIdSensor() == this.id && rs.getValue(contador).getValue() != 0){
 
+                    // Temperatura crítica
                     if (rs.getValue(contador).getValue() > 35){
                         if (position < 15) alerta_amarelo++;
                         if (position < 5) alerta_vermelho++;
@@ -302,10 +310,12 @@ class Atuador extends Thread{
                     this.position++;
 
                 }
+                // Retrocede no vetor para pegar as últimas temperaturas medidas indo da última até a primeira disponível
                 contador--;
                 contador = Math.floorMod(contador, 60);
             }
 
+            // Emite o alerta correto
             if (alerta_vermelho >= 5){
                 System.out.println("sa.atuadorAlertaVermelho(" + this.id + ")");
             } else if (alerta_amarelo >= 5){
@@ -313,19 +323,20 @@ class Atuador extends Thread{
             } else {
                 System.out.println("sa.atuadorAlertaNormal(" + this.id + ")");
             }
-
+            // Emite a média
             if (this.media == 0){
                 System.out.println("sa.atuadorMedia(" + this.id + ", " + 0 + ")");
             } else {
                 System.out.println("sa.atuadorMedia(" + this.id + ", " + this.media/this.position + ")");
             }
 
+            // Reseta as variáveis para a próxima leitura
             this.alerta_vermelho = 0;
             this.alerta_amarelo = 0;
             this.media = 0;
             this.position = 0;
 
-            //System.out.println("Atuador(" + this.id + ") terminou de ler.");
+            // Deixa a thread Atuadora dormindo durante 2 segundos
             leit.FimLeitura(this.id);
             try {Thread.sleep(2000);}
             catch (InterruptedException e) { System.out.println("erro"); return; }
@@ -344,6 +355,8 @@ public class monitoramento {
         }
         int sensores = Integer.parseInt(args[0]);
 
+        // Como queremos sempre as 15 últimas leituras, se o número de sensores for muito grande o programa começará
+        // a não fazer muito sentido
         if (sensores > 4){
             System.out.println("Numero de sensores nao e o recomendado, por favor execute novamente com um numero menor.");
             System.exit(1);
@@ -354,23 +367,25 @@ public class monitoramento {
         System.out.println("import verificaSA");
         System.out.println("sa = verificaSA.SA(" + sensores + ")");
 
+        // Instancia os recursos compartilhados e as threads
         Resource rs = new Resource(sensores);
         LE le = new LE();
         Thread[] threadsSensores = new Thread[sensores];
         Thread[] threadsAtuadores = new Thread[sensores];
 
-
+        // Declara as threads
         for (int i = 0; i < threadsSensores.length; i++) {
             threadsSensores[i] = new Sensor(i, rs, le);
             threadsAtuadores[i] = new Atuador(i, rs, le);
         }
 
+        // Inicializa as Threads
         for (int i = 0; i < threadsSensores.length; i++) {
             threadsSensores[i].start();
             threadsAtuadores[i].start();
         }
 
-        //espera pelo termino de todas as threads
+        //espera pelo termino de todas as threads (desnecessário visto que executará indeterminadamente)
         for (int i = 0; i < threadsSensores.length; i++) {
             try {
                 threadsAtuadores[i].join();
